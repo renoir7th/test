@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <title>Replicate Image Demo</title>
+</head>
+<body>
+  <h1>Replicate Image Demo</h1>
+  <input type="file" id="imageInput">
+  <input type="text" id="promptInput" placeholder="Prompt" value="Make this a 90s cartoon">
+  <button id="submitBtn">Process</button>
+  <div id="result"></div>
+
+<script>
+document.getElementById('submitBtn').addEventListener('click', async () => {
+    const image = document.getElementById('imageInput').files[0];
+    const prompt = document.getElementById('promptInput').value;
+    if (!image) {
+        alert('Please select an image.');
+        return;
+    }
+    const formData = new FormData();
+    formData.append('image', image);
+    formData.append('prompt', prompt);
+
+    const response = await fetch('/process', {
+        method: 'POST',
+        body: formData
+    });
+    if(!response.ok){
+        alert('Error processing image.');
+        return;
+    }
+    const data = await response.json();
+    const img = new Image();
+    img.src = 'data:image/jpeg;base64,' + data.image;
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = '';
+    resultDiv.appendChild(img);
+});
+</script>
+</body>
+</html>
