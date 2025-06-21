@@ -9,8 +9,17 @@ import replicate
 
 app = Flask(__name__)
 
-# Replicate API token (hard-coded as requested)
-os.environ["REPLICATE_API_TOKEN"] = "r8_aLads83FscsbQT8nvQtLhdFYiP3qbnf3EzRZ1"
+# Load Replicate API token from environment or .token file
+token = os.environ.get("REPLICATE_API_TOKEN")
+if not token:
+    token_path = ".token"
+    if os.path.exists(token_path):
+        with open(token_path) as f:
+            token = f.read().strip()
+if not token:
+    # Fallback to previous hard-coded token for backward compatibility
+    token = "r8_aLads83FscsbQT8nvQtLhdFYiP3qbnf3EzRZ1"
+os.environ["REPLICATE_API_TOKEN"] = token
 
 @app.route("/")
 def index():
