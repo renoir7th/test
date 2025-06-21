@@ -17,3 +17,9 @@ python app.py
 ```
 
 Open your browser at [http://localhost:5000](http://localhost:5000) to use the web interface.
+
+## Providing the Replicate API token
+
+Set the `REPLICATE_API_TOKEN` environment variable or create a file named
+`.token` in the project root containing your token. If neither is provided, the
+application uses a built-in token for backward compatibility.
