@@ -15,5 +15,11 @@ Run the server:
 ```bash
 python app.py
 ```
+By default the server listens on port `5000`. You can change the port by setting
+the `PORT` environment variable:
 
-Open your browser at [http://localhost:5000](http://localhost:5000) to use the web interface.
+```bash
+PORT=5001 python app.py
+```
+
+Open your browser at [http://localhost:5000](http://localhost:5000) (or your chosen port) to use the web interface.
