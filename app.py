@@ -1,6 +1,7 @@
 import os
 import io
 import base64
+from datetime import datetime
 from flask import Flask, render_template, request, jsonify
 from PIL import Image
 import requests
@@ -22,7 +23,10 @@ os.environ["REPLICATE_API_TOKEN"] = token
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    template_path = os.path.join(app.root_path, "templates", "index.html")
+    mtime = os.path.getmtime(template_path)
+    last_updated = datetime.utcfromtimestamp(mtime).strftime('%Y-%m-%d %H:%M UTC')
+    return render_template("index.html", last_updated=last_updated)
 
 @app.route("/process", methods=["POST"])
 def process_image():
@@ -60,4 +64,5 @@ def process_image():
     return jsonify({"image": encoded})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
