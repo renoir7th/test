@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>운명을 대비하자</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9807035669654635" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .custom-btn {
+            padding: 12px 20px;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background-color: #4338ca;
+        }
+        .btn-primary:disabled {
+            background-color: #374151;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            border: 2px solid #4a5568;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #4a5568;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .input-field {
+            background-color: #1f2937;
+            border: 1px solid #4b5563;
+            color: white;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            width: 100%;
+        }
+        select.input-field {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+        .loader-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            z-index: 10;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4f46e5;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .hidden {
+            display: none;
+        }
+        .image-container p {
+            max-width: 90%;
+        }
+        .result-box {
+            background-color: #1f2937;
+            border: 1px solid #4b5563;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            min-height: 100px;
+            white-space: pre-wrap;
+            color: #d1d5db;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 flex flex-col items-center justify-center min-h-screen p-4 pt-16">
+
+    <div class="w-full bg-gray-900/80 backdrop-blur-sm text-white text-sm text-center py-2 fixed top-0 left-0 z-50 border-b border-gray-700">
+        <p>🔮 누적 방문자수: <span id="visitor-count" class="font-bold">...</span></p>
+    </div>
+
+    <div class="w-full max-w-4xl bg-gray-800 rounded-2xl shadow-2xl p-6 md:p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold mb-3 text-white">운명을 대비하자</h1>
+            <p class="text-gray-400">관상과 사주 정보로 매일 하루를 이겨내요.</p>
+        </div>
+
+        <!-- 사용자 정보 입력란 -->
+        <div class="space-y-4 mb-6 bg-gray-900/50 p-4 rounded-lg">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div class="lg:col-span-2">
+                    <label for="birthdate" class="block text-sm font-medium text-gray-300 mb-1">생년월일</label>
+                    <div class="flex items-center gap-4">
+                        <input type="date" id="birthdate" class="input-field" value="1990-01-01">
+                        <div class="flex items-center space-x-4 flex-shrink-0">
+                            <label class="flex items-center text-gray-300 cursor-pointer">
+                                <input type="radio" name="calendarType" value="solar" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500" checked>
+                                <span class="ml-2">양력</span>
+                            </label>
+                            <label class="flex items-center text-gray-300 cursor-pointer">
+                                <input type="radio" name="calendarType" value="lunar" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
+                                <span class="ml-2">음력</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label for="birthtime" class="block text-sm font-medium text-gray-300 mb-1">태어난 시간</label>
+                    <input type="time" id="birthtime" class="input-field" value="07:00">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-gray-700">
+                 <div>
+                    <label for="gender" class="block text-sm font-medium text-gray-300 mb-1">성별</label>
+                     <div class="flex items-center space-x-4 h-full">
+                        <label for="male" class="flex items-center text-gray-300 cursor-pointer">
+                            <input type="radio" id="male" name="gender" value="male" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500" checked>
+                            <span class="ml-2">남성</span>
+                        </label>
+                        <label for="female" class="flex items-center text-gray-300 cursor-pointer">
+                            <input type="radio" id="female" name="gender" value="female" class="w-4 h-4 text-pink-600 bg-gray-700 border-gray-600 focus:ring-pink-500">
+                                <span class="ml-2">여성</span>
+                            </label>
+                        </div>
+                    </div>
+                 <div>
+                    <label for="birthRegion" class="block text-sm font-medium text-gray-300 mb-1">출생지역</label>
+                    <select id="birthRegion" class="input-field">
+                        <option>서울</option><option>부산</option><option>대구</option><option>인천</option><option>광주</option><option>대전</option><option>울산</option><option>세종</option><option>경기</option><option>강원</option><option>충북</option><option>충남</option><option>전북</option><option>전남</option><option>경북</option><option>경남</option><option>제주</option><option>해외</option><option>모름</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-700">
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-300 mb-1">전화번호</label>
+                    <input type="tel" id="phone" class="input-field" placeholder="010-XXXX-XXXX">
+                    <p class="text-xs text-gray-500 mt-1">(필수아님. 기재하시면, 카카오톡으로 매일 운세를 보내드립니다)</p>
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-1">이메일</label>
+                    <input type="email" id="email" class="input-field" placeholder="you@example.com">
+                    <p class="text-xs text-gray-500 mt-1">(필수아님, 기재하시면 구글캘린더와 연동하여 그날의 주의사항을 보내드립니다)</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 버튼 영역 -->
+        <div class="text-center mb-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <label for="contentLoader" class="custom-btn btn-secondary order-1 sm:order-1">사진 선택</label>
+            <input type="file" id="contentLoader" accept="image/*"/>
+            <button id="generateBtn" class="custom-btn btn-primary order-2 sm:order-2" disabled>관상 보기(클릭)</button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="w-full aspect-square bg-gray-700 rounded-lg flex items-center justify-center image-container">
+                <img id="contentImage" src="" class="max-w-full max-h-full object-contain hidden rounded-md" alt="사용자가 업로드한 얼굴 이미지">
+                <p id="contentPlaceholder" class="text-gray-500 text-center">얼굴 사진을 올려주세요. 관상만 보고 바로 삭제하니 걱정마세요. </p>
+            </div>
+            <div id="resultContainer" class="w-full aspect-square bg-gray-700 rounded-lg flex items-center justify-center relative">
+                <div id="loader" class="loader-container hidden">
+                    <div class="loader"></div>
+                    <p id="statusText" class="text-white mt-4 font-medium">관상가 분석 및 생성 중...</p>
+                </div>
+                <img id="generatedImage" src="" alt="AI가 생성한 이미지" class="max-w-full max-h-full object-contain hidden rounded-md">
+                <p id="resultPlaceholder" class="text-gray-500 text-center p-4">관상가가 그린 그림이 여기에 표시됩니다.</p>
+            </div>
+        </div>
+        
+        <!-- 운세 분석 결과 표시 영역 -->
+        <div id="fortune-results" class="mt-8 space-y-6 hidden">
+            <h2 class="text-2xl font-bold text-center text-white">운세 분석 결과</h2>
+            <div>
+                <h3 class="text-xl font-semibold text-indigo-400 mb-2">관상(생성그림이 아닌 실제 사진으로 분석)</h3>
+                <div id="gwansang-result" class="result-box space-y-2">분석 중...</div>
+            </div>
+            <div>
+                <h3 class="text-xl font-semibold text-indigo-400 mb-2">사주풀이 및 올해의 운세</h3>
+                <div id="saju-result" class="result-box space-y-2">분석 중...</div>
+            </div>
+            <div>
+                <h3 class="text-xl font-semibold text-indigo-400 mb-2">오늘의 운세</h3>
+                <div id="today-fortune-result" class="result-box space-y-2">분석 중...</div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+             <h3 class="text-lg font-semibold mb-2">참고 그림체</h3>
+             <img src="https://lh3.googleusercontent.com/d/1V0lFIG8WZ5qpCaRN7qzsYoJnl9kzypk0" alt="참고 그림체" class="max-w-12 mx-auto rounded-lg shadow-lg">
+        </div>
+    </div>
+    
+<script>
+  // NOTE: This Firebase config should be replaced with your own project's configuration.
+  const __firebase_config = JSON.stringify({
+    apiKey: "AIzaSyDeFrVH3y18empMfD0j84gzMz3uJXrm_0c",
+    authDomain: "defenddestiny-11e12.firebaseapp.com",
+    projectId: "defenddestiny-11e12",
+    storageBucket: "defenddestiny-11e12.appspot.com",
+    messagingSenderId: "425775598353",
+    appId: "1:425775598353:web:aacab1f6dde1de1749ab0",
+    measurementId: "G-Y2PW7NNWM2"
+  });
+
+  const __app_id = "defenddestiny-11e12";
+</script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, doc, runTransaction, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let db;
+
+        const elements = {
+            contentLoader: document.getElementById('contentLoader'),
+            generateBtn: document.getElementById('generateBtn'),
+            contentImage: document.getElementById('contentImage'),
+            generatedImage: document.getElementById('generatedImage'),
+            contentPlaceholder: document.getElementById('contentPlaceholder'),
+            resultPlaceholder: document.getElementById('resultPlaceholder'),
+            loader: document.getElementById('loader'),
+            statusText: document.getElementById('statusText'),
+            fortuneResults: document.getElementById('fortune-results'),
+            gwansangResult: document.getElementById('gwansang-result'),
+            sajuResult: document.getElementById('saju-result'),
+            todayFortuneResult: document.getElementById('today-fortune-result'),
+            visitorCount: document.getElementById('visitor-count')
+        };
+
+        let contentBase64 = null;
+        let contentMimeType = '';
+        
+        async function initializeFirebaseAndCounter() {
+            const visitorCountSpan = document.getElementById('visitor-count');
+            if (typeof __firebase_config === 'undefined' || !__firebase_config || __firebase_config === "{}") {
+                console.warn("Firebase config not found. Visitor counter is disabled.");
+                visitorCountSpan.textContent = '카운트 비활성';
+                return;
+            }
+
+            try {
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                
+                const counterRef = doc(db, 'artifacts', appId, 'public/data/visitorCounter', 'countDoc');
+
+                if (!sessionStorage.getItem('visitorCounted')) {
+                    await runTransaction(db, async (transaction) => {
+                        const counterDoc = await transaction.get(counterRef);
+                        const newCount = (counterDoc.exists() ? counterDoc.data().value : 0) + 1;
+                        transaction.set(counterRef, { value: newCount }, { merge: true });
+                    });
+                    sessionStorage.setItem('visitorCounted', 'true');
+                }
+                
+                onSnapshot(counterRef, (doc) => {
+                    visitorCountSpan.textContent = doc.exists() ? doc.data().value.toLocaleString() : '1';
+                });
+
+            } catch(error) {
+                console.error("Firebase/Counter Initialization Error:", error);
+                visitorCountSpan.textContent = "Error";
+            }
+        }
+        
+        initializeFirebaseAndCounter();
+        
+        function generateUUID() { 
+            let d = new Date().getTime();
+            let d2 = (performance && performance.now && (performance.now() * 1000)) || 0;
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                let r = Math.random() * 16;
+                if (d > 0) {
+                    r = (d + r) % 16 | 0;
+                    d = Math.floor(d / 16);
+                } else {
+                    r = (d2 + r) % 16 | 0;
+                    d2 = Math.floor(d2 / 16);
+                }
+                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+        }
+        
+        async function getUserIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                if (!response.ok) throw new Error('IP-API response not OK.');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error('Could not get user IP:', error);
+                return 'N/A';
+            }
+        }
+        
+        function resizeImage(base64Str, maxSize = 512) {
+            return new Promise((resolve) => {
+                if (!base64Str) {
+                    resolve(null);
+                    return;
+                }
+                const img = new Image();
+                img.src = `data:image/png;base64,${base64Str}`;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxSize) {
+                            height *= maxSize / width;
+                            width = maxSize;
+                        }
+                    } else {
+                        if (height > maxSize) {
+                            width *= maxSize / height;
+                            height = maxSize;
+                        }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.8).split(',')[1]);
+                };
+                 img.onerror = () => {
+                    console.error("Image could not be loaded for resizing.");
+                    resolve(null);
+                };
+            });
+        }
+
+        elements.contentLoader.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    elements.contentImage.src = event.target.result;
+                    elements.contentImage.classList.remove('hidden');
+                    elements.contentPlaceholder.classList.add('hidden');
+                    contentBase64 = event.target.result.split(',')[1];
+                    contentMimeType = file.type;
+                    elements.generateBtn.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        elements.generateBtn.addEventListener('click', async () => {
+            if (!contentBase64) {
+                console.error("콘텐츠 이미지를 선택해주세요.");
+                return;
+            }
+            
+            elements.loader.classList.remove('hidden');
+            elements.statusText.textContent = '분석 및 결과 저장 중...';
+            elements.generatedImage.classList.add('hidden');
+            elements.resultPlaceholder.classList.remove('hidden');
+            elements.resultPlaceholder.textContent = '그림 생성 중...'
+            elements.fortuneResults.classList.remove('hidden');
+            elements.gwansangResult.innerHTML = '관상 분석 중...';
+            elements.sajuResult.innerHTML = '사주풀이 분석 중...';
+            elements.todayFortuneResult.innerHTML = '오늘의 운세 분석 중...';
+            
+            const userData = {
+                birthdate: document.getElementById('birthdate').value,
+                calendarType: document.querySelector('input[name="calendarType"]:checked')?.value || 'solar',
+                birthtime: document.getElementById('birthtime').value,
+                gender: document.querySelector('input[name="gender"]:checked')?.value || 'Not specified',
+                birthRegion: document.getElementById('birthRegion').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+            };
+            
+            if (userData.phone || userData.email) {
+                saveUserDataToSheet(userData);
+            }
+            
+            const resizedImage = await resizeImage(contentBase64);
+
+const [ipResult, imageResult, sajuResult] = await Promise.allSettled([
+    getUserIP(),
+    getImageAnalysisAndDrawing(resizedImage, contentMimeType),
+    getSajuAndTodayFortune(userData)
+]);
+
+            const userIp = ipResult.status === 'fulfilled' ? ipResult.value : 'N/A';
+            let gwansangAnalysis = '분석 오류';
+            let sajuData = { saju: '분석 오류', todayFortune: '분석 오류' };
+            let generatedImgBase64 = null;
+
+            if (imageResult.status === 'fulfilled') {
+                const { generatedImgBase64: imgBase64, gwansangAnalysis: analysis } = imageResult.value;
+                generatedImgBase64 = imgBase64;
+                gwansangAnalysis = analysis;
+                elements.generatedImage.src = `data:image/png;base64,${generatedImgBase64}`;
+                elements.generatedImage.classList.remove('hidden');
+                elements.resultPlaceholder.classList.add('hidden');
+                
+                elements.gwansangResult.innerHTML = '';
+                 if (gwansangAnalysis) {
+                     gwansangAnalysis.split('\n').forEach(line => {
+                         if (line.trim()) {
+                             const p = document.createElement('p');
+                             p.innerHTML = line.replace(/\*\*(.*?)\*\*:/g, '<strong class="text-indigo-300">$1:</strong>');
+                             elements.gwansangResult.appendChild(p);
+                         }
+                     });
+                 } else {
+                     elements.gwansangResult.textContent = '관상 정보를 가져올 수 없습니다.';
+                 }
+            } else {
+                console.error("Image/Gwansang Error:", imageResult.reason);
+                elements.resultPlaceholder.textContent = `그림/관상 오류: ${imageResult.reason.message}`;
+                elements.gwansangResult.textContent = `관상 분석 오류: ${imageResult.reason.message}`;
+            }
+
+            if (sajuResult.status === 'fulfilled') {
+                sajuData = parseSajuText(sajuResult.value);
+                
+                const renderFormattedResult = (element, text, fallback) => {
+                    element.innerHTML = '';
+                    if (text && text.trim()) {
+                        text.split('\n').forEach(line => {
+                            if (line.trim()) {
+                                const p = document.createElement('p');
+                                p.innerHTML = line.replace(/\*\*(.*?)\*\*:/g, '<strong class="text-indigo-300">$1:</strong>');
+                                element.appendChild(p);
+                            }
+                        });
+                    } else {
+                        element.textContent = fallback;
+                    }
+                };
+
+                renderFormattedResult(elements.sajuResult, sajuData.saju, '사주 정보를 가져올 수 없습니다.');
+                renderFormattedResult(elements.todayFortuneResult, sajuData.todayFortune, '오늘의 운세 정보를 가져올 수 없습니다.');
+
+            } else {
+                console.error("Saju/Today's Fortune Error:", sajuResult.reason);
+                elements.sajuResult.textContent = `사주/운세 분석 오류: ${sajuResult.reason.message}`;
+                elements.todayFortuneResult.textContent = `오늘의 운세 분석 오류: ${sajuResult.reason.message}`;
+            }
+
+            elements.statusText.textContent = '이미지 최적화 및 최종 저장 중...';
+            
+            const [resizedUserImg, resizedAIIcon] = await Promise.all([
+                resizeImage(contentBase64),
+                generatedImgBase64 ? resizeImage(generatedImgBase64) : Promise.resolve(null)
+            ]);
+
+            await saveResultsToFirestore({
+                ...userData,
+                userIp: userIp,
+                gwansangResult: gwansangAnalysis,
+                sajuResult: sajuData.saju,
+                todayFortuneResult: sajuData.todayFortune,
+                userImageBase64: resizedUserImg,
+                generatedImageBase64: resizedAIIcon
+            });
+
+            elements.loader.classList.add('hidden');
+        });
+        
+        async function saveResultsToFirestore(data) {
+            if (!db) {
+                console.error("Firestore is not initialized. Cannot save data.");
+                return;
+            }
+            try {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                let userId = sessionStorage.getItem('anonymousUserId');
+                if (!userId) {
+                    userId = generateUUID();
+                    sessionStorage.setItem('anonymousUserId', userId);
+                }
+                const resultsCollectionRef = collection(db, 'artifacts', appId, 'users', userId, 'fortuneResults');
+                await addDoc(resultsCollectionRef, {
+                    ...data,
+                    createdAt: new Date().toISOString()
+                });
+                console.log("Fortune results saved to Firestore successfully.");
+            } catch (error) {
+                console.error("Error saving results to Firestore:", error);
+            }
+        }
+
+        function parseSajuText(text) {
+            const data = { saju: '', todayFortune: '' };
+            if (!text) return data;
+
+            const todayHeader = '### 오늘의 운세';
+            const sajuHeader = '### 사주풀이';
+            const todayHeaderAlt = '### ['; // Alternative header
+            
+            let splitIndex = text.indexOf(todayHeader);
+            if (splitIndex === -1) {
+                splitIndex = text.indexOf(todayHeaderAlt);
+            }
+
+            if (splitIndex !== -1) {
+                data.saju = text.substring(0, splitIndex).replace(sajuHeader, '').trim();
+                data.todayFortune = text.substring(splitIndex).replace(todayHeader, '').trim();
+            } else {
+                data.saju = text.replace(sajuHeader, '').trim();
+                data.todayFortune = ''; // Explicitly empty
+            }
+            
+            return data;
+        }
+        
+async function getImageAnalysisAndDrawing(resizedBase64, mimeType) {
+  const response = await fetch("http://defenddestiny.com/analyze-image", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      imageBase64: resizedBase64,
+      mimeType: mimeType
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error("백엔드 분석 실패");
+  }
+
+  const result = await response.json();
+  return {
+    generatedImgBase64: result.generatedImgBase64,
+    gwansangAnalysis: result.gwansangAnalysis
+  };
+}
+
+        
+        async function saveUserDataToSheet(userData) {
+            const googleAppScriptUrl = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE"; 
+            if (googleAppScriptUrl === "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") {
+                 console.warn("Google Apps Script URL is not set. Data was not saved.");
+                 return;
+            }
+            try {
+                await fetch(googleAppScriptUrl, {
+                    method: 'POST', mode: 'no-cors', cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+            } catch (error) {
+                console.error('Error saving data to Google Sheet:', error);
+            }
+        }
+
+        async function getImageAnalysis() {
+            const apiKey = "AIzaSyBbE8WtD3uXI2eYp-lrISHk5myuNBjGSao";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{
+                    role: "user",
+                    parts: [
+                        { text: `You are a forensic artist and a physiognomy expert. Your tasks are separated by markdown headers.
+
+### Drawing Description
+**This part must be in English.**
+Act as a forensic artist creating a description for another artist to draw a hyper-realistic portrait. The description must be extremely detailed, objective, and factual, focusing on geometric shapes, angles, and specific features. It should be so precise that the resulting drawing is nearly identical to the photo, including hair, ears, and neck. Break down the person into these specific components:
+- **Face Shape:** Describe the overall shape (e.g., oval, round, square), jawline angle, and chin shape (e.g., pointed, square, rounded).
+- **Eyes:** Detail the shape (e.g., almond, round), distance between them, presence and type of epicanthic fold, eyelid details (e.g., monolid, double eyelid, hooded), angle (e.g., upturned, downturned), and eyelash characteristics.
+- **Eyebrows:** Describe the shape (e.g., straight, arched), thickness, density, and distance from the eyes.
+- **Nose:** Detail the bridge width, tip shape (e.g., button, aquiline), nostril size and flare, and the angle from the face.
+- **Mouth:** Describe lip fullness ratio (top vs. bottom), the definition of the cupid's bow, and the angle of the mouth corners.
+- **Ears:** Describe the size, shape, lobe type (e.g., attached, detached), and any visible piercings.
+- **Hair:** Detail the hairstyle (e.g., short, long, parted on the left), texture (e.g., straight, wavy, curly), length, color, and hairline shape.
+- **Neck:** Note the length, thickness, and visibility of any prominent features like the Adam's apple.
+- **Key Features:** Note the exact location and shape of any moles, scars, freckles, or significant wrinkles on the face and neck.
+- **Pose and Expression:** Describe the head tilt, direction of gaze, and the specific expression (e.g., neutral, slight smile with left corner raised).
+
+### Gwansang Analysis
+**This part must be in KOREAN.**
+Based on the image, provide a traditional Korean physiognomy (Gwansang) analysis. Analyze each key facial feature (forehead, eyes, nose, mouth, ears, chin, etc.) and explain their meanings in the context of fortune, personality, and life path. List each feature on a new line with the format "**부위명**: 분석 내용".` },
+                        { inlineData: { mimeType: contentMimeType, data: contentBase64 } }
+                    ]
+                }],
+            };
+            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({ error: { message: response.statusText } }));
+                throw new Error(`이미지 분석 API 오류: ${err.error.message}`);
+            }
+            const result = await response.json();
+            const text = result.candidates[0].content.parts[0].text;
+            
+            const drawingMatch = text.match(/### Drawing Description\s*([\s\S]*?)(?=\n###|$)/);
+            const gwansangMatch = text.match(/### Gwansang Analysis\s*([\s\S]*)/);
+
+            return {
+                drawingDescription: drawingMatch ? drawingMatch[1].trim() : '',
+                gwansangAnalysis: gwansangMatch ? gwansangMatch[1].trim() : ''
+            };
+        }
+        
+        async function getSajuAndTodayFortune(userData) {
+            const apiKey = "AIzaSyBbE8WtD3uXI2eYp-lrISHk5myuNBjGSao";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const today = new Date();
+            const year = today.getFullYear();
+            const todayString = today.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long',
+            });
+            
+            const payload = {
+                contents: [{
+                    role: "user",
+                    parts: [{ text: `You are an expert in traditional Korean fortune telling. It is crucial to use the provided user information for the analysis.
+                            
+Please format your response clearly in KOREAN with markdown headers.
+
+### 사주풀이
+First, on a new line, state the user's information clearly like this: "**생년월일**: ${userData.birthdate} (${userData.calendarType}) / **시간**: ${userData.birthtime} / **성별**: ${userData.gender} / **지역**: ${userData.birthRegion}".
+Then, analyze the user's information and provide a one-line summary for each of the following categories, using the format "**Category Name**: Summary". The categories are: **총운 (Overall Fortune), 재물운 (Wealth Fortune), 직업운 (Career Fortune), 애정운 (Love Fortune), 건강운 (Health Fortune)**. Finally, add a one-line summary for the current year, ${year}, with the title "**${year}년 총운:**".
+
+### 오늘의 운세
+This section MUST start with the "### 오늘의 운세" header on its own line.
+On the next line, start with a title like this: "**[${todayString}]**".
+Then, provide a concise horoscope for today. At the end, you **MUST** add a new section starting with a newline and the title "**오늘의 행운**". Under it, list the following in the format "**Item**: Value1, Value2". You MUST provide two for each category: **행운의 색깔 (Lucky Color), 행운의 숫자 (Lucky Number), 행운의 아이템 (Lucky Item)**.`
+                    },
+                    ]
+                }]
+            };
+            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({ error: { message: response.statusText } }));
+                throw new Error(`사주/운세 분석 API 오류: ${err.error.message}`);
+            }
+            const result = await response.json();
+            if (result.candidates && result.candidates[0].content.parts[0].text) {
+                return result.candidates[0].content.parts[0].text;
+            } else {
+                throw new Error("사주/운세 분석 API로부터 유효한 응답을 받지 못했습니다.");
+            }
+        }
+
+        async function generateImageFromPrompt(prompt) {
+            const apiKey = "AIzaSyBbE8WtD3uXI2eYp-lrISHk5myuNBjGSao";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+            const payload = { instances: [{ prompt: prompt }], parameters: { "sampleCount": 1 } };
+            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({ error: { message: response.statusText } }));
+                throw new Error(`그림 생성 API 오류: ${err.error.message}`);
+            }
+            const result = await response.json();
+            if (result.predictions && result.predictions[0].bytesBase64Encoded) {
+                return result.predictions[0].bytesBase64Encoded;
+            } else {
+                throw new Error("AI가 그림을 생성하지 못했습니다.");
+            }
+        }
+    </script>
+</body>
+</html>
